@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breakout Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url(img4.jpg); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+        
+        canvas {
+            border: 2px solid black;
+            background-color: transparent;
+            position: absolute;
+        }
+        
+        #startMenu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1> Breakout Game </h1>
+    <div id="startMenu">
+        <button id="classicModeBtn">Classic Mode</button>
+        <button id="infiniteModeBtn">Infinite Mode</button>
+    </div>
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+    <script src="game.js"></script>
+</body>
+</html>
