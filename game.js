@@ -70,10 +70,12 @@ function drawScore() {
     ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
-function drawLives() {
-    ctx.fillStyle = '#0095DD';
-    ctx.font = '16px Arial';
-    ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
+function drawLevel() {
+    if (mode === 'infinite') {
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#0095DD';
+        ctx.fillText('Level: ' + level, canvas.width / 2 - 30, 20);
+    }
 }
 
 function drawLevel() {
