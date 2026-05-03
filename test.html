@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUBHADIP MONDAL | Futuristic Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f3ff;
+            --secondary: #bc13fe;
+            --bg-color: #050508;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(0, 243, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-color);
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .nav-logo, .btn {
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* Interactive 3D Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #0a0a12 0%, #000000 100%);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(15px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+            animation: slideDown 1s ease-out forwards;
+        }
+
+        .nav-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 15px var(--primary);
+            position: relative;
+        }
+        
+        .nav-logo span {
+            color: var(--primary);
+        }
+
+        .nav-links a {
+            color: #aaa;
+            text-decoration: none;
+            margin-left: 2.5rem;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--primary);
+            transition: 0.3s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Generic Section Setup */
+        section {
+            padding: 120px 5%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 4rem;
+            text-align: center;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(188, 19, 254, 0.4);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards 0.5s;
+        }
+
+        /* Hero Section */
+        #hero {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 4rem;
+        }
+
+        .hero-content {
+            flex: 1;
+            min-width: 300px;
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideRight 1s ease forwards 0.2s;
+        }
+
+        .hero-greeting {
+            color: var(--primary);
+            letter-spacing: 4px;
+            margin-bottom: 1rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: #ddd;
+            margin-bottom: 2rem;
+            height: 40px; /* fixed height for typewriter */
+        }
+
+        .typewriter {
+            border-right: 3px solid var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 4s steps(40, end), blink-caret .8s step-end infinite;
+            display: inline-block;
+        }
+
+        .hero-desc {
+            color: #8892b0;
+            max-width: 550px;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Hero Image Container */
+        .hero-image-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            min-width: 300px;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: popIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.6s;
+        }
+
+        .hero-image {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            padding: 5px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(188, 19, 254, 0.5);
+            animation: morphing 10s ease-in-out infinite, float 6s ease-in-out infinite;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            border: 4px solid var(--bg-color);
+            animation: morphing 10s ease-in-out infinite;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: -15px; left: -15px; right: -15px; bottom: -15px;
+            border: 2px dashed var(--primary);
+            border-radius: inherit;
+            animation: spin 20s linear infinite;
+            opacity: 0.5;
+        }
+
+        /* Buttons & Socials */
+        .btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            text-decoration: none;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: var(--bg-color);
+            box-shadow: 0 0 30px var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            transition: 0.4s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--bg-color);
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-5px) rotate(360deg);
+        }
+
+        /* Glassmorphism Cards Container */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        /* Futuristic Card Design */
+        .card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            transform-style: preserve-3d;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.15);
+            transform: translateY(-10px);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            transform: translateZ(40px); /* 3D pop effect */
+        }
+
+        .card p {
+            color: #8892b0;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            transform: translateZ(20px);
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            transform: translateZ(30px);
+        }
+
+        .tech-tag {
+            background: rgba(188, 19, 254, 0.1);
+            color: #e2a0ff;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(188, 19, 254, 0.3);
+            transition: 0.3s;
+        }
+
+        .card:hover .tech-tag {
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--primary);
+            border-color: rgba(0, 243, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        /* Animations Keyframes */
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { 50% { border-color: transparent; } }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideRight { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes float { 
+            0% { transform: translateY(0px); } 
+            50% { transform: translateY(-20px); } 
+            100% { transform: translateY(0px); } 
+        }
+        @keyframes morphing {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+            50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+            75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+            100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .hero-title { font-size: 3.5rem; }
+            #hero { text-align: center; justify-content: center; }
+            .social-links { justify-content: center; }
+            .nav-links { display: none; }
+            .hero-image { width: 280px; height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Interactive Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <nav>
+        <div class="nav-logo">SM<span>.</span></div>
+        <div class="nav-links">
+            <a href="#hero">HOME</a>
+            <a href="#projects">PROJECTS</a>
+            <a href="#certifications">CERTIFICATIONS</a>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <div class="hero-content">
+            <span class="hero-greeting"><i class="fas fa-terminal"></i> SYSTEM.READY()</span>
+            <h1 class="hero-title">SUBHADIP MONDAL</h1>
+            <div class="hero-subtitle">
+                <span class="typewriter">> Full Stack Developer & AI Enthusiast_</span>
+            </div>
+            <p class="hero-desc">
+                B.Tech Computer Science & Engineering student specializing in building exceptional digital experiences, scaling backend architectures, and integrating machine learning models.
+            </p>
+            <a href="https://www.linkedin.com/in/subhadip--mondal/" target="_blank" class="btn">CONNECT <i class="fas fa-rocket" style="margin-left: 8px;"></i></a>
+            
+            <div class="social-links">
+                <a href="https://github.com/" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/subhadip--mondal/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+
+        <div class="hero-image-wrapper">
+            <div class="hero-image">
+                <!-- User's Image is referenced here -->
+                <img src="2.png" alt="Subhadip Mondal">
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">01. FEATURED ARCHITECTURE</h2>
+        <div class="grid-layout">
+            <!-- Project 1 -->
+            <div class="card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000">
+                <h3><i class="fas fa-qrcode" style="color: var(--primary); margin-right: 10px;"></i> Qroo System</h3>
+                <p>A comprehensive full-stack Educational Management System. Engineered with secure SHA-256 QR attendance verification protocols to ensure seamless and authentic student tracking.</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">Firebase</span>
+                    <span class="tech-tag">Chart.js</span>
+                    <span class="tech-tag">SHA-256</span>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000">
+                <h3><i class="fas fa-clock" style="color: var(--secondary); margin-right: 10px;"></i> Focus Clock App</h3>
+                <p>A sleek, web-based productivity application designed to help users effectively manage deep work sessions and track operational efficiency in real-time environments.</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">HTML/CSS</span>
+                    <span class="tech-tag">Vercel Cloud</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="certifications">
+        <h2 class="section-title">02. CREDENTIALS</h2>
+        <div class="grid-layout">
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.3">
+                <h3><i class="fab fa-google" style="color: var(--primary); margin-right: 10px;"></i> Google</h3>
+                <p>Gemini for Data Scientists and Analysts Skills Badge</p>
+            </div>
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.3">
+                <h3><i class="fas fa-laptop-code" style="color: var(--secondary); margin-right: 10px;"></i> Udemy</h3>
+                <p>AI Agents for Everyone & AI Bootcamp<br><br>Flutter & Dart Essentials</p>
+            </div>
+            <div class="card" data-tilt data-tilt-glare data-tilt-max-glare="0.3">
+                <h3><i class="fab fa-salesforce" style="color: #00a1e0; margin-right: 10px;"></i> Salesforce</h3>
+                <p>Start Your Trailblazer Journey & Developer Quest</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Tilt Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+    
+    <!-- Advanced Interactive Particle Script -->
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 243, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            update() {
+                // Interactive mouse repulsion
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < mouse.radius) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 10;
+                    }
+                }
+                
+                // Slow drift
+                this.baseX += (Math.random() - 0.5) * 0.5;
+                this.baseY += (Math.random() - 0.5) * 0.5;
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 8000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                
+                // Network Connections
+                for (let j = i; j < particlesArray.length; j++) {
+                    let dx = particlesArray[i].x - particlesArray[j].x;
+                    let dy = particlesArray[i].y - particlesArray[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(188, 19, 254, ${0.15 - distance/800})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+        
+        window.addEventListener('mouseout', () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
